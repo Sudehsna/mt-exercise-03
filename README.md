@@ -66,3 +66,66 @@ pip install -r requirements.txt
 Manually download and install Moses and other dependencies (you'll need to look inside scripts/download_install_packages.sh to replicate its steps).
 
 Run the training logic by manually executing the code inside train.sh, or porting it to a Python script or notebook.
+
+
+# Task 1: Understanding Code: LayerNorm in JoeyNMT
+
+In transformer_layers.py we can see that the TransformerEncoderLayer and TransformerDecoderLayer are set to layer_norm="post" in their constructor definitions. This means that if no configuration is provided, the model will apply post-norm by default.
+
+    ../joeynmt/scripts/transformer_layers.py 
+
+
+```
+class TransformerEncoderLayer(nn.Module):
+    def __init__(
+        self,
+        size: int = 0,
+        ff_size: int = 0,
+        num_heads: int = 0,
+        dropout: float = 0.1,
+        alpha: float = 1.0,
+        layer_norm: str = "post", # here we see the default value which is post-normalization
+        activation: str = "relu",
+    ) -> None:
+```
+
+However, we noticed that JoeyNMT supports both pre-norm and post-norm. We can see this well in the forward pass of the encoder and decoder layers.
+```
+ def forward(self, x: Tensor, mask: Tensor) -> Tensor:
+        residual = x
+        if self._layer_norm_position == "pre": ##
+            x = self.layer_norm(x)
+
+        x, _ = self.src_src_att(x, x, x, mask)
+        x = self.dropout(x) + self.alpha * residual
+
+        if self._layer_norm_position == "post": ##
+            x = self.layer_norm(x)
+
+        out = self.feed_forward(x)
+        return out
+```
+
+
+So ultimately the behavior is determined by the YAML configuration. In the provided YAML files we observe that the encoders and decoders are explicitly configured with "pre".
+
+    ../joeynmt/configs/iwslt14_deen_bpe.yaml
+
+```
+encoder:
+        type: "transformer"
+       ...
+        layer_norm: "pre"
+        activation: "relu"
+    decoder:
+        type: "transformer"
+        ...
+        layer_norm: "pre"
+        activation: "relu"
+```
+This means that for this model setup, JoeyNMT is running in pure pre-norm mode, overriding the default. These configurations make it possible for users to switch between "pre" and "post" by simply changing the layer_norm setting in a file.
+
+
+DO WE NEED TO SAY WHERE LAYERNORM IS EVERYWHERE? LIKE BEFORE FF/AFTER MHATT?
+
+# Task 2: Implementing Pre- and Post-Normalization
