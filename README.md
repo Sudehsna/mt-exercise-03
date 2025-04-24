@@ -75,7 +75,7 @@ In transformer_layers.py we can see that the TransformerEncoderLayer and Transfo
     ../joeynmt/scripts/transformer_layers.py 
 
 
-```
+``` python
 class TransformerEncoderLayer(nn.Module):
     def __init__(
         self,
@@ -90,7 +90,8 @@ class TransformerEncoderLayer(nn.Module):
 ```
 
 However, we noticed that JoeyNMT supports both pre-norm and post-norm. We can see this well in the forward pass of the encoder and decoder layers.
-```
+
+``` python
  def forward(self, x: Tensor, mask: Tensor) -> Tensor:
         residual = x
         if self._layer_norm_position == "pre": ##
@@ -111,7 +112,7 @@ So ultimately the behavior is determined by the YAML configuration. In the provi
 
     ../joeynmt/configs/iwslt14_deen_bpe.yaml
 
-```
+``` yaml
 encoder:
         type: "transformer"
        ...
