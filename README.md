@@ -130,3 +130,37 @@ This means that for this model setup, JoeyNMT is running in pure pre-norm mode, 
 DO WE NEED TO SAY WHERE LAYERNORM IS EVERYWHERE? LIKE BEFORE FF/AFTER MHATT?
 
 # Task 2: Implementing Pre- and Post-Normalization
+
+To implement pre- and post-normalization we need to configure two new config files where we added 
+
+```yaml
+layer_norm: "pre"
+```
+OR
+
+```yaml
+layer_norm: "post"
+```
+
+respectively to both the enocder and decoder layer to the default model configurations.
+
+Both of our folders (joeynmt & mt-exercise-03) were located on Desktop, so you will need to change the paths in the config files to run them on your machine.
+
+Due to version conflict we also downgraded Numpy module using ```pip install "numpy<2"```.
+
+Trying to run ```train.sh``` we ran into an error that we weren't able to solve:
+
+```yaml
+ File "/Users/sud/Desktop/joeynmt/joeynmt/helpers.py", line 508, in resolve_ckpt_path
+    assert load_model.is_file(), load_model
+AssertionError: /Users/sud/Desktop/mt-exercise-03/models/deen_transformer_postnorm/0.ckpt
+```
+We tried to use the argument "--skip_test" to see if we can train the model without testing but that also didn't work.
+(Out of desperation we asked ChatGPT and we tried most of it's solutions but still nothing worked.)
+
+**Our theoretical solution :)**
+From prior research (e.g., Wang et al., 2019), it is known that pre-norm configurations tend to provide greater training stability, particularly in deeper Transformer architectures. In contrast, post-norm configurations are more prone to issues such as exploding or vanishing gradients, especially when applied to deep models. 
+In low-resource settings pre-norm is generally expected to perform better, particularly in the early stages of training.
+Our experimental setup differed from that of Wang et al. in several key aspects: it involved significantly fewer layers(four encoder layers and one decoder layer), a much smaller dataset, and CPU-based training. Despite these differences, we would still expect pre-norm to outperform post-norm in terms of early convergence and training stability, although the final performance differences would likely remain modest due to the limited scale of the data.
+
+In conclusion, while we were unable to complete the training :( drawing on insights from the literature and the design of this exercise, we expect that pre-norm would yield better results than post-norm in terms of validation perplexity and overall training stability in this low-resource scenario.
