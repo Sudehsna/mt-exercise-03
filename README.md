@@ -94,13 +94,13 @@ However, we noticed that JoeyNMT supports both pre-norm and post-norm. We can se
 ``` python
  def forward(self, x: Tensor, mask: Tensor) -> Tensor:
         residual = x
-        if self._layer_norm_position == "pre": ##
+        if self._layer_norm_position == "pre": # Here it executes LayerNorm before applying masked attention/dropout/residuals
             x = self.layer_norm(x)
 
         x, _ = self.src_src_att(x, x, x, mask)
         x = self.dropout(x) + self.alpha * residual
 
-        if self._layer_norm_position == "post": ##
+        if self._layer_norm_position == "post": # Here the masked attention/dropout/residuals are executed already and now post LayerNorm is applied
             x = self.layer_norm(x)
 
         out = self.feed_forward(x)
