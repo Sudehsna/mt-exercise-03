@@ -127,8 +127,6 @@ encoder:
 This means that for this model setup, JoeyNMT is running in pure pre-norm mode, overriding the default. These configurations make it possible for users to switch between "pre" and "post" by simply changing the layer_norm setting in a file.
 
 
-DO WE NEED TO SAY WHERE LAYERNORM IS EVERYWHERE? LIKE BEFORE FF/AFTER MHATT?
-
 # Task 2: Implementing Pre- and Post-Normalization
 
 To implement pre- and post-normalization we need to configure two new config files where we added 
