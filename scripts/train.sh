@@ -8,7 +8,7 @@ configs=$base/configs
 
 mkdir -p $models
 
-num_threads=10
+num_threads=8 # Changed it to 8 to match the number of CPU cores
 #device=0
 
 # measure time
@@ -17,7 +17,7 @@ SECONDS=0
 
 logs=$base/logs
 
-model_name=deen_transformer_regular
+model_name=prenorm_model
 
 mkdir -p $logs
 
