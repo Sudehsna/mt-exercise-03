@@ -159,6 +159,7 @@ We tried to use the argument "--skip_test" to see if we can train the model with
 (Out of desperation we asked ChatGPT and we tried most of it's solutions but still nothing worked.)
 
 **Our theoretical solution :)**
+
 From prior research (e.g., Wang et al., 2019), it is known that pre-norm configurations tend to provide greater training stability, particularly in deeper Transformer architectures. In contrast, post-norm configurations are more prone to issues such as exploding or vanishing gradients, especially when applied to deep models. 
 In low-resource settings pre-norm is generally expected to perform better, particularly in the early stages of training.
 Our experimental setup differed from that of Wang et al. in several key aspects: it involved significantly fewer layers(four encoder layers and one decoder layer), a much smaller dataset, and CPU-based training. Despite these differences, we would still expect pre-norm to outperform post-norm in terms of early convergence and training stability, although the final performance differences would likely remain modest due to the limited scale of the data.
